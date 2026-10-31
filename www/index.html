@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maisha's Life Hub</title>
+    
+    <!-- PWA / Offline App Settings -->
+    <meta name="theme-color" content="#09090b" id="theme-color-meta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzA5MDkwYiIvPjx0ZXh0IHk9IjYwIiB4PSI1MCIgZm9udC1zaXplPSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2VjNDg5OSI+4p2kPC90ZXh0Pjwvc3ZnPg==">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Plus Jakarta Sans', 'Hind Siliguri', 'sans-serif'],
+                        sans: ['DM Sans', 'Hind Siliguri', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        darkBg: '#09090b',
+                        lightBg: '#fafafa',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        html { scrollbar-gutter: stable; }
+        body {
+            font-family: 'DM Sans', 'Hind Siliguri', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; }
+        .font-mono-tabular { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+        
+        /* HARDWARE ACCELERATED TAP ANIMATION */
+        .tap-scale { 
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease; 
+            cursor: pointer; 
+            transform-origin: center; 
+            -webkit-tap-highlight-color: transparent;
+            backface-visibility: hidden; 
+            transform: translateZ(0) scale(1);
+            will-change: transform;
+        }
+        .tap-scale:active { 
+            transform: translateZ(0) scale(0.92); 
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tab-animate { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-slide-up { animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes breatheCycle {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.8); opacity: 1; }
+        }
+        .animate-breathe { animation: breatheCycle 8s ease-in-out infinite; }
+
+        /* Easter Egg Floating Hearts Animation */
+        @keyframes floatUpHeart {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+        .heart-float {
+            position: absolute;
+            color: #f43f5e;
+            animation: floatUpHeart 4s ease-in forwards;
+            will-change: transform, opacity;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(161, 161, 170, 0.3); border-radius: 9999px; }
+    </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-darkBg dark:text-zinc-100 min-h-screen pb-28 md:pb-12">
+
+    <!-- Ambient Soft Glow -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div id="bg-orb-1" class="absolute -top-24 -left-24 w-96 h-96 bg-pink-500/10 rounded-full blur-[110px] transition-colors duration-1000"></div>
+        <div id="bg-orb-2" class="absolute top-1/3 -right-24 w-96 h-96 bg-purple-500/10 rounded-full blur-[110px] transition-colors duration-1000"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-30 bg-white/80 dark:bg-darkBg/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800/80 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <a href="#" onclick="switchTab('dashboard'); triggerEasterEgg(); return false;" id="txt-app-title" class="text-lg font-extrabold tracking-tight font-display bg-gradient-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400 bg-clip-text text-transparent whitespace-nowrap shrink-0">
+                    Maisha's Life Hub
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                <button onclick="switchTab('dashboard')" id="dnav-dashboard" class="py-1 border-b-2 border-pink-500 text-zinc-900 dark:text-white font-semibold">Overview</button>
+                <button onclick="switchTab('routine')" id="dnav-routine" class="py-1 border-b-2 border-transparent hover:text-zinc-900 dark:hover:text-white">Routine</button>
+                <button onclick="switchTab('tasks')" id="dnav-tasks" class="py-1 border-b-2 border-transparent hover:text-zinc-900 dark:hover:text-white">Tasks</button>
+                <button onclick="switchTab('care')" id="dnav-care" class="py-1 border-b-2 border-transparent hover:text-zinc-900 dark:hover:text-white">Care & Cycle</button>
+                <button onclick="switchTab('meals')" id="dnav-meals" class="py-1 border-b-2 border-transparent hover:text-zinc-900 dark:hover:text-white">Meals</button>
+                <button onclick="switchTab('settings')" id="dnav-settings" class="py-1 border-b-2 border-transparent hover:text-zinc-900 dark:hover:text-white">Settings</button>
+            </nav>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="openModal('quick')" class="tap-scale h-9 sm:h-10 px-4 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xs font-bold shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span id="txt-quick-add" class="hidden sm:inline">Quick Add</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-5 sm:pt-7 space-y-6 relative z-10">
+
+        <!-- Sub-header Toolbar -->
+        <div id="dashboard-header" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-3 border-b border-zinc-200/70 dark:border-zinc-800/70 transition-colors">
+            <div>
+                <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 font-mono-tabular font-medium">
+                    <span id="live-date-str"></span>
+                    <span>·</span>
+                    <span id="live-time-str"></span>
+                </div>
+                <h1 id="live-greeting" class="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-white mt-0.5">
+                    Good day, Maisha
+                </h1>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openModal('guide')" class="tap-scale h-10 w-10 rounded-xl bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-circle-question"></i>
+                </button>
+                <button onclick="toggleLanguage()" id="top-btn-lang" class="tap-scale h-10 px-3.5 rounded-xl text-xs font-bold bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
+                    বাংলা
+                </button>
+                <button onclick="toggleTheme()" class="tap-scale h-10 w-10 rounded-xl bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-center transition-colors">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= DASHBOARD TAB ================= -->
+        <section id="tab-dashboard" class="space-y-6 tab-animate">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                <div onclick="switchTab('tasks')" class="tap-scale rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3 shadow-sm transition-colors">
+                    <div class="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                        <span id="txt-stat-tasks">Tasks Done</span>
+                        <i class="fa-solid fa-list-check text-pink-500"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span id="dash-tasks-count" class="text-3xl font-extrabold font-mono-tabular">0/0</span>
+                    </div>
+                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div id="dash-tasks-bar" class="bg-gradient-to-r from-pink-500 to-purple-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3 shadow-sm transition-colors">
+                    <div class="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                        <span id="txt-stat-water">Water Level</span>
+                        <i class="fa-solid fa-droplet text-sky-500"></i>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span id="dash-water-count" class="text-3xl font-extrabold font-mono-tabular">0/8</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="changeWater(-1)" class="tap-scale w-7 h-7 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-600 dark:text-zinc-400">-</button>
+                            <button onclick="changeWater(1)" class="tap-scale px-2 h-7 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 text-xs font-bold">+1</button>
+                        </div>
+                    </div>
+                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div id="dash-water-bar" class="bg-gradient-to-r from-sky-400 to-blue-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3 shadow-sm transition-colors">
+                    <div class="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                        <span id="txt-stat-focus">Focus Logged</span>
+                        <i class="fa-solid fa-clock text-purple-500"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span id="dash-focus-mins" class="text-3xl font-extrabold font-mono-tabular">0m</span>
+                        <span id="dash-focus-sessions" class="text-xs font-mono-tabular text-zinc-400">0 sess</span>
+                    </div>
+                    <div class="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div id="dash-focus-bar" class="bg-purple-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div onclick="switchTab('care')" class="tap-scale rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 space-y-3 shadow-sm transition-colors">
+                    <div class="flex items-center justify-between text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                        <span id="txt-stat-mood">Today's Mood</span>
+                        <i class="fa-solid fa-face-smile text-emerald-500"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between pt-1">
+                        <span id="dash-mood-emoji" class="text-3xl">☁️</span>
+                        <span id="dash-mood-text" class="text-xs font-bold text-emerald-600 dark:text-emerald-400">Not Logged</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Column Main Split -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6 shadow-sm transition-colors">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 id="txt-todays-timeline" class="text-base font-bold font-display">Today's Timeline</h2>
+                            <button onclick="switchTab('routine')" id="txt-view-full" class="tap-scale text-xs bg-pink-500/10 text-pink-600 dark:text-pink-400 px-3 py-1.5 rounded-xl font-bold">Full Schedule →</button>
+                        </div>
+                        <div id="dashboard-schedule-list" class="divide-y divide-zinc-100 dark:divide-zinc-800/80"></div>
+                    </div>
+
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6 shadow-sm transition-colors">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 id="txt-priority-tasks" class="text-base font-bold font-display">Priority Study Tasks</h2>
+                            <button onclick="openModal('task')" class="tap-scale text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400 px-3 py-1.5 rounded-xl font-bold">+ Add Task</button>
+                        </div>
+                        <div id="dashboard-tasks-list" class="divide-y divide-zinc-100 dark:divide-zinc-800/80"></div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6 space-y-5 shadow-sm transition-colors">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h3 id="txt-pomodoro-title" class="text-base font-bold font-display">Study Focus Timer</h3>
+                                <p id="timer-sub-status" class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Select preset & ambient sound</p>
+                            </div>
+                            <div class="flex items-center gap-1 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                                <button onclick="setAmbient('off')" id="amb-off" class="tap-scale px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-900 shadow-sm text-zinc-800 dark:text-zinc-200">Silent</button>
+                                <button onclick="setAmbient('rain')" id="amb-rain" class="tap-scale px-2.5 py-1 rounded-lg text-xs font-semibold text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">🌧️ Rain</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-zinc-100 dark:bg-zinc-800/70">
+                            <button onclick="setTimerPreset(25, false, 'p25')" id="preset-p25" class="tap-scale py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-white dark:bg-zinc-900 text-pink-600 dark:text-pink-400 shadow-sm">25m</button>
+                            <button onclick="setTimerPreset(50, false, 'p50')" id="preset-p50" class="tap-scale py-2 rounded-xl text-[11px] sm:text-xs font-bold text-zinc-500">50m</button>
+                            <button onclick="setTimerPreset(5, true, 'b5')" id="preset-b5" class="tap-scale py-2 rounded-xl text-[11px] sm:text-xs font-bold text-zinc-500">Brk 5m</button>
+                            <button onclick="setTimerPreset(15, true, 'b15')" id="preset-b15" class="tap-scale py-2 rounded-xl text-[11px] sm:text-xs font-bold text-zinc-500">Rest 15m</button>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div id="timer-display" class="text-4xl sm:text-5xl font-bold font-mono-tabular tracking-tight">25:00</div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleTimer()" id="timer-toggle-btn" class="tap-scale min-h-[44px] px-5 sm:px-6 py-2.5 rounded-2xl bg-purple-600 text-white text-xs font-bold shadow-sm">Start Focus</button>
+                                <button onclick="resetTimer()" class="tap-scale h-[44px] w-[44px] rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 flex items-center justify-center"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-3xl bg-gradient-to-br from-pink-500/5 via-white to-purple-500/5 dark:from-purple-950/20 dark:via-zinc-900/90 dark:to-pink-950/20 border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6 space-y-4 shadow-sm transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span id="txt-daily-vibe" class="text-xs font-bold font-display text-pink-600 dark:text-pink-400">Daily Inspiration</span>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="nextQuote()" class="tap-scale text-[11px] font-bold bg-zinc-100 dark:bg-white/10 text-zinc-600 dark:text-zinc-300 px-2.5 py-1.5 rounded-xl">Next</button>
+                                <button onclick="openModal('note')" class="tap-scale text-[11px] bg-pink-600 text-white px-2.5 py-1.5 rounded-xl font-bold">Journal</button>
+                            </div>
+                        </div>
+                        <p id="dashboard-quote" class="text-sm sm:text-base font-medium leading-relaxed italic text-zinc-800 dark:text-zinc-200">
+                            "Every small step you take today is building the brilliant future you deserve."
+                        </p>
+                        <div class="pt-3 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-between">
+                            <span id="txt-stressed" class="text-xs text-zinc-500 dark:text-zinc-400">Feeling stressed?</span>
+                            <button onclick="openBreathingModal()" class="tap-scale text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-xl">
+                                <i class="fa-solid fa-wind"></i> <span id="txt-breathe-btn">1-Min Calm</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 sm:p-6 space-y-4 shadow-sm transition-colors">
+                        <div class="flex items-center justify-between">
+                            <h3 id="txt-exams-title" class="text-sm font-bold font-display">Exams & Deadlines</h3>
+                            <button onclick="openModal('exam')" id="txt-add-exam" class="tap-scale text-xs font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-500/10 px-2.5 py-1.5 rounded-xl">+ Add</button>
+                        </div>
+                        <div id="exams-list" class="space-y-2.5"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= OTHER TABS ================= -->
+        
+        <!-- ROUTINE TAB -->
+        <section id="tab-routine" class="hidden space-y-6 tab-animate">
+            <div class="flex items-center justify-between">
+                <h2 id="txt-routine-header" class="text-xl font-bold font-display text-zinc-900 dark:text-white">Full Schedule</h2>
+                <button onclick="openModal('routine')" id="btn-add-routine" class="tap-scale text-xs font-bold bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 rounded-xl shadow-sm">+ Add Routine</button>
+            </div>
+            <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-2 sm:p-4 shadow-sm">
+                <div id="routine-list" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- TASKS TAB -->
+        <section id="tab-tasks" class="hidden space-y-6 tab-animate">
+            <div class="flex items-center justify-between">
+                <h2 id="txt-tasks-header" class="text-xl font-bold font-display text-zinc-900 dark:text-white">Study Tasks</h2>
+                <button onclick="openModal('task')" id="btn-add-task-tab" class="tap-scale text-xs font-bold bg-purple-600 text-white px-4 py-2 rounded-xl shadow-sm">+ Add Task</button>
+            </div>
+            <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-2 sm:p-4 shadow-sm">
+                <div id="tasks-list" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- CARE & CYCLE TAB -->
+        <section id="tab-care" class="hidden space-y-6 tab-animate">
+            <h2 id="txt-care-header" class="text-xl font-bold font-display text-zinc-900 dark:text-white">Wellness & Cycle</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Mood & Journal -->
+                <div class="space-y-6">
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm">
+                        <h3 id="txt-mood-title" class="font-bold text-sm mb-4">How are you feeling today?</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button onclick="logMood('🤩', 'Amazing')" class="tap-scale p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 flex flex-col items-center">
+                                <span class="text-2xl mb-1">🤩</span><span class="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">Amazing</span>
+                            </button>
+                            <button onclick="logMood('😊', 'Happy')" class="tap-scale p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 flex flex-col items-center">
+                                <span class="text-2xl mb-1">😊</span><span class="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">Happy</span>
+                            </button>
+                            <button onclick="logMood('😌', 'Calm')" class="tap-scale p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 flex flex-col items-center">
+                                <span class="text-2xl mb-1">😌</span><span class="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">Calm</span>
+                            </button>
+                            <button onclick="logMood('🥱', 'Tired')" class="tap-scale p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 flex flex-col items-center">
+                                <span class="text-2xl mb-1">🥱</span><span class="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">Tired</span>
+                            </button>
+                            <button onclick="logMood('🥺', 'Stressed')" class="tap-scale p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 flex flex-col items-center">
+                                <span class="text-2xl mb-1">🥺</span><span class="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">Stressed</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 id="txt-journal-title" class="font-bold text-sm">Daily Journal</h3>
+                            <button onclick="openModal('note')" id="btn-add-journal" class="tap-scale text-xs font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-xl">Add Entry</button>
+                        </div>
+                        <div id="journal-list" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Cycle Tracker -->
+                <div class="rounded-3xl bg-gradient-to-b from-pink-50 to-white dark:from-pink-950/20 dark:to-zinc-900/90 border border-pink-100 dark:border-pink-900/30 p-5 sm:p-6 shadow-sm">
+                    <h3 id="txt-period-header" class="font-bold text-base font-display text-pink-600 dark:text-pink-400 mb-6 flex items-center gap-2"><i class="fa-solid fa-venus"></i> Cycle Tracker</h3>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <span id="txt-cycle-pred-lbl" class="text-[10px] font-bold uppercase tracking-wider text-pink-500">Next Prediction</span>
+                            <h4 id="period-status-text" class="text-xl font-extrabold mt-1 text-zinc-900 dark:text-white">Calculating...</h4>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-pink-100 dark:bg-pink-500/20 text-pink-500 flex items-center justify-center text-xl shadow-inner">
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-white dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <span class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Last Start Date</span>
+                            <div class="flex items-center justify-between">
+                                <span id="period-date-display" class="text-sm font-bold font-mono-tabular">--/--/----</span>
+                                <button onclick="openCustomDatePicker()" class="tap-scale px-2 py-1 rounded-lg bg-pink-50 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400 text-[10px] font-bold">Edit</button>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <span class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Cycle Days</span>
+                            <select id="cycle-length-select" onchange="setCycleLength(this.value)" class="w-full bg-transparent text-sm font-bold font-mono-tabular outline-none cursor-pointer">
+                                <option value="26">26 Days</option>
+                                <option value="28">28 Days</option>
+                                <option value="30">30 Days</option>
+                                <option value="32">32 Days</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-white/50 dark:bg-zinc-800/50 border border-pink-100 dark:border-pink-900/30">
+                        <span class="text-xs font-bold flex items-center gap-1.5 mb-2"><i class="fa-solid fa-heart-pulse text-pink-500"></i> Care Tips</span>
+                        <ul class="text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5 pl-5 list-disc marker:text-pink-300">
+                            <li>Stay hydrated with warm lemon water.</li>
+                            <li>Dark chocolate boosts serotonin.</li>
+                            <li>Prioritize gentle stretching and rest.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEALS TAB -->
+        <section id="tab-meals" class="hidden space-y-6 tab-animate">
+            <div class="flex items-center justify-between">
+                <h2 id="txt-meals-header" class="text-xl font-bold font-display text-zinc-900 dark:text-white">Meals & Hydration</h2>
+                <button onclick="openModal('meal')" id="btn-add-meal-tab" class="tap-scale text-xs font-bold bg-blue-600 text-white px-4 py-2 rounded-xl shadow-sm">+ Add Meal</button>
+            </div>
+            <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-2 sm:p-4 shadow-sm">
+                <div id="meals-list" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- SETTINGS TAB -->
+        <section id="tab-settings" class="hidden space-y-6 tab-animate">
+            <h2 id="txt-settings-header" class="text-xl font-bold font-display text-zinc-900 dark:text-white">Settings & Notifications</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Notifications Engine Setup -->
+                <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm md:col-span-2">
+                    <h3 class="font-bold text-sm mb-1"><i class="fa-solid fa-bell text-pink-500 mr-1.5"></i> Smart Web Notifications</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+                        Enable this to get a <strong>Loud Alarm Beep</strong> and popup when it's time for a routine! 
+                        <br><span class="text-pink-500">(Note: Keep the app open or minimized in background for the alarm to ring).</span>
+                    </p>
+                    <button onclick="requestNotificationPermission()" class="tap-scale w-full sm:w-auto py-2.5 px-6 rounded-xl bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 text-xs font-bold border border-pink-200 dark:border-pink-800/50">Turn On Notifications & Alarm</button>
+                </div>
+
+                <!-- Backup -->
+                <div class="rounded-3xl bg-white dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm">
+                    <h3 id="txt-backup-title" class="font-bold text-sm mb-1"><i class="fa-solid fa-database text-purple-500 mr-1.5"></i> Data Backup</h3>
+                    <p id="txt-backup-desc" class="text-xs text-zinc-500 dark:text-zinc-400 mb-4">Export or import your OS data safely.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportData()" class="tap-scale py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-300">Export JSON</button>
+                        <label class="tap-scale py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-300 flex items-center justify-center cursor-pointer">
+                            <span>Import JSON</span>
+                            <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="rounded-3xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-5 shadow-sm">
+                    <h3 id="txt-danger-title" class="font-bold text-sm text-red-600 dark:text-red-400 mb-1"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Danger Zone</h3>
+                    <p id="txt-danger-desc" class="text-xs text-red-500/80 dark:text-red-400/80 mb-4">Wipe all local data and start fresh.</p>
+                    <button onclick="confirmReset()" id="btn-reset" class="tap-scale w-full py-2.5 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-bold border border-red-200 dark:border-red-800/50">Factory Reset</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- NEW STRUCTURALLY RIGID MOBILE BOTTOM NAVIGATION -->
+    <nav class="md:hidden fixed bottom-4 left-0 w-full px-4 z-50">
+        <div class="flex items-center justify-between p-1.5 shadow-xl border border-zinc-200 dark:border-zinc-800 rounded-[24px] bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl">
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tap-scale flex-1 py-2.5 rounded-[18px] text-[10px] font-bold flex flex-col items-center gap-1 bg-zinc-100 dark:bg-zinc-800 text-pink-600 dark:text-pink-400">
+                <i class="fa-solid fa-house text-sm"></i><span id="nav-lbl-home">Home</span>
+            </button>
+            <button onclick="switchTab('routine')" id="tab-btn-routine" class="tap-scale flex-1 py-2.5 rounded-[18px] text-[10px] font-bold text-zinc-500 dark:text-zinc-400 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-calendar-days text-sm"></i><span id="nav-lbl-routine">Routine</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="tap-scale flex-1 py-2.5 rounded-[18px] text-[10px] font-bold text-zinc-500 dark:text-zinc-400 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-list-check text-sm"></i><span id="nav-lbl-tasks">Tasks</span>
+            </button>
+            <button onclick="switchTab('care')" id="tab-btn-care" class="tap-scale flex-1 py-2.5 rounded-[18px] text-[10px] font-bold text-zinc-500 dark:text-zinc-400 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-spa text-sm"></i><span id="nav-lbl-care">Care</span>
+            </button>
+            <button onclick="switchTab('meals')" id="tab-btn-meals" class="tap-scale flex-1 py-2.5 rounded-[18px] text-[10px] font-bold text-zinc-500 dark:text-zinc-400 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-utensils text-sm"></i><span id="nav-lbl-meals">Meals</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Bottom Sheet Modal / Add Forms -->
+    <div id="app-modal" class="fixed inset-0 z-[60] bg-zinc-900/40 dark:bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center sm:p-4 transition-opacity duration-300" onclick="if(event.target === this) closeModal()">
+        <div class="bg-white dark:bg-zinc-900 w-full max-w-md p-6 modal-slide-up rounded-t-[2rem] sm:rounded-3xl border-t border-zinc-200 dark:border-zinc-800 sm:border shadow-2xl relative" onclick="event.stopPropagation()">
+            <div class="w-10 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-full mx-auto mb-4 sm:hidden"></div>
+            <div class="flex items-center justify-between mb-5">
+                <h3 id="modal-title" class="font-bold text-lg font-display text-zinc-900 dark:text-white">Action</h3>
+                <button onclick="closeModal()" class="tap-scale w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="space-y-4 max-h-[70vh] overflow-y-auto px-1 pb-2 custom-scrollbar"></div>
+            <div id="modal-footer-btns" class="flex gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800 mt-2">
+                <button onclick="closeModal()" id="btn-cancel" class="tap-scale flex-1 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-sm font-bold text-zinc-600 dark:text-zinc-300">Cancel</button>
+                <button onclick="handleModalSubmit()" id="modal-submit-btn" class="tap-scale flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white text-sm font-bold shadow-md">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breathing Modal -->
+    <div id="breathing-modal" class="fixed inset-0 z-[70] bg-white dark:bg-zinc-900 hidden flex-col items-center justify-center transition-opacity" onclick="closeBreathingModal()">
+        <h2 class="absolute top-10 text-xl font-bold font-display text-zinc-800 dark:text-zinc-200">1-Minute Calm</h2>
+        <p id="breath-instruction" class="absolute top-20 text-sm text-zinc-500 font-medium">Breathe in...</p>
+        
+        <div class="relative w-48 h-48 flex items-center justify-center">
+            <div id="breath-circle" class="absolute w-24 h-24 bg-emerald-400/20 rounded-full"></div>
+            <div class="absolute w-12 h-12 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/40 flex items-center justify-center">
+                <i class="fa-solid fa-leaf text-white"></i>
+            </div>
+        </div>
+        
+        <button class="absolute bottom-12 px-6 py-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm font-bold text-zinc-600 dark:text-zinc-400 tap-scale">Tap anywhere to close</button>
+    </div>
+
+    <!-- Easter Egg Cinematic Overlay -->
+    <div id="easter-egg-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center pointer-events-none bg-black/60 backdrop-blur-md transition-opacity duration-700 opacity-0">
+        <div class="text-center transform scale-50 opacity-0 transition-all duration-700 relative z-10 flex flex-col items-center" id="easter-egg-content">
+            <i class="fa-solid fa-heart text-rose-500 text-6xl md:text-8xl mb-6 animate-bounce drop-shadow-[0_0_20px_rgba(244,63,94,0.6)]"></i>
+            <h2 class="text-3xl md:text-5xl font-extrabold font-display bg-gradient-to-r from-rose-400 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl px-4 text-center">
+                Crafted with 💖 by Shawon
+            </h2>
+            <p class="text-rose-200 mt-3 font-medium text-sm md:text-lg tracking-widest uppercase">Just for Maisha ✨</p>
+        </div>
+        <!-- Floating hearts container -->
+        <div id="floating-hearts" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-container" class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[80] pointer-events-none transition-all duration-300 opacity-0 translate-y-4">
+        <div id="toast-msg" class="px-5 py-2.5 rounded-full text-xs font-bold shadow-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-pink-500"></i>
+            <span id="toast-text">Success!</span>
+        </div>
+    </div>
+
+    <script>
+        // ================= STATE & DATA =================
+        let isDark = localStorage.getItem('vibeos_theme') !== 'light';
+        let currentLang = localStorage.getItem('vibeos_lang') || 'en';
+        
+        let routineData = JSON.parse(localStorage.getItem('vibeos_routine')) || [];
+        let tasksData = JSON.parse(localStorage.getItem('vibeos_tasks')) || [];
+        let mealsData = JSON.parse(localStorage.getItem('vibeos_meals')) || [];
+        let journalData = JSON.parse(localStorage.getItem('vibeos_journal')) || [];
+        let examsData = JSON.parse(localStorage.getItem('vibeos_exams')) || [];
+        
+        let waterCount = parseInt(localStorage.getItem('vibeos_water')) || 0;
+        let waterDate = localStorage.getItem('vibeos_water_date') || new Date().toDateString();
+        
+        let focusStats = JSON.parse(localStorage.getItem('vibeos_focus_stats')) || { mins: 0, sessions: 0, date: new Date().toDateString() };
+        let todayMood = localStorage.getItem('vibeos_mood_today') || null;
+        let todayMoodDate = localStorage.getItem('vibeos_mood_date') || null;
+        
+        let periodData = JSON.parse(localStorage.getItem('vibeos_period')) || { startDate: new Date().toISOString().slice(0,10), cycleLength: 28 };
+
+        // Daily Reset Checks
+        const todayStr = new Date().toDateString();
+        if (waterDate !== todayStr) { waterCount = 0; localStorage.setItem('vibeos_water_date', todayStr); localStorage.setItem('vibeos_water', 0); }
+        if (focusStats.date !== todayStr) { focusStats = { mins: 0, sessions: 0, date: todayStr }; localStorage.setItem('vibeos_focus_stats', JSON.stringify(focusStats)); }
+        if (todayMoodDate !== todayStr) { todayMood = null; }
+
+        let activeModalType = null;
+        let editingId = null;
+
+        // ================= THEME & CLOCK =================
+        function applyTheme() {
+            const html = document.documentElement;
+            const meta = document.getElementById('theme-color-meta');
+            const icon = document.getElementById('theme-icon');
+            if (isDark) {
+                html.classList.add('dark');
+                meta.content = "#09090b";
+                if(icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); icon.classList.add('text-amber-400'); }
+            } else {
+                html.classList.remove('dark');
+                meta.content = "#fafafa";
+                if(icon) { icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); icon.classList.remove('text-amber-400'); }
+            }
+        }
+        function toggleTheme() {
+            isDark = !isDark;
+            localStorage.setItem('vibeos_theme', isDark ? 'dark' : 'light');
+            applyTheme();
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString(currentLang === 'bn' ? 'bn-BD' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            document.getElementById('live-time-str').innerText = timeStr;
+            document.getElementById('live-date-str').innerText = dateStr;
+            
+            const hour = now.getHours();
+            let greeting = currentLang === 'bn' ? "শুভ দিন, মাইশা" : "Good day, Maisha";
+            if(hour < 12) greeting = currentLang === 'bn' ? "শুভ সকাল, মাইশা" : "Good morning, Maisha";
+            else if(hour < 18) greeting = currentLang === 'bn' ? "শুভ অপরাহ্ন, মাইশা" : "Good afternoon, Maisha";
+            else greeting = currentLang === 'bn' ? "শুভ সন্ধ্যা, মাইশা" : "Good evening, Maisha";
+            document.getElementById('live-greeting').innerText = greeting;
+
+            // Trigger web notifications engine every second
+            checkWebNotifications();
+        }
+        setInterval(updateClock, 1000);
+
+        // ================= TRANSLATION =================
+        const dict = {
+            en: {
+                home: "Home", routine: "Routine", tasks: "Tasks", care: "Care", meals: "Meals", settings: "Settings",
+                dashTitle: "Today's Timeline", priorityTasks: "Priority Tasks", focusTitle: "Study Focus Timer",
+                vibeTitle: "Daily Inspiration", examsTitle: "Exams & Deadlines", tasksDone: "Tasks Done",
+                waterLvl: "Water Level", focusLog: "Focus Logged", mood: "Today's Mood", addBtn: "Quick Add",
+                q1: "Every small step you take today is building the brilliant future you deserve.",
+                q2: "Consistency is your superpower, Maisha. Keep shining!",
+                q3: "Rest is productive. Don't forget to take a breather.",
+                btnFull: "Full Schedule →", btnAddTsk: "+ Add Task", btnSave: "Save Item", btnCancel: "Cancel"
+            },
+            bn: {
+                home: "হোম", routine: "রুটিন", tasks: "টাস্ক", care: "যত্ন", meals: "খাবার", settings: "সেটিংস",
+                dashTitle: "আজকের সময়সূচি", priorityTasks: "জরুরী টাস্ক", focusTitle: "স্টাডি ফোকাস টাইমার",
+                vibeTitle: "দৈনন্দিন অনুপ্রেরণা", examsTitle: "পরীক্ষা ও ডেডলাইন", tasksDone: "সম্পন্ন টাস্ক",
+                waterLvl: "পানির স্তর", focusLog: "ফোকাস সময়", mood: "আজকের মুড", addBtn: "যোগ করুন",
+                q1: "আজকের প্রতিটি ছোট পদক্ষেপ তোমার উজ্জ্বল ভবিষ্যতের ভিত্তি গড়ছে।",
+                q2: "ধারাবাহিকতাই তোমার মূল শক্তি, মাইশা। এগিয়ে চলো!",
+                q3: "বিশ্রাম নেওয়াও কাজের অংশ। নিজের খেয়াল রেখো।",
+                btnFull: "সম্পূর্ণ রুটিন →", btnAddTsk: "+ টাস্ক যোগ করুন", btnSave: "সংরক্ষণ", btnCancel: "বাতিল"
+            }
+        };
+
+        const quotes = ['q1', 'q2', 'q3'];
+        let quoteIdx = 0;
+
+        function applyLanguage() {
+            const t = dict[currentLang];
+            document.getElementById('top-btn-lang').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+            
+            document.getElementById('nav-lbl-home').innerText = t.home;
+            document.getElementById('nav-lbl-routine').innerText = t.routine;
+            document.getElementById('nav-lbl-tasks').innerText = t.tasks;
+            document.getElementById('nav-lbl-care').innerText = t.care;
+            document.getElementById('nav-lbl-meals').innerText = t.meals;
+            
+            document.getElementById('dnav-dashboard').innerText = t.home;
+            document.getElementById('dnav-routine').innerText = t.routine;
+            document.getElementById('dnav-tasks').innerText = t.tasks;
+            document.getElementById('dnav-care').innerText = t.care;
+            document.getElementById('dnav-meals').innerText = t.meals;
+            document.getElementById('dnav-settings').innerText = t.settings;
+
+            document.getElementById('txt-quick-add').innerText = t.addBtn;
+            document.getElementById('txt-stat-tasks').innerText = t.tasksDone;
+            document.getElementById('txt-stat-water').innerText = t.waterLvl;
+            document.getElementById('txt-stat-focus').innerText = t.focusLog;
+            document.getElementById('txt-stat-mood').innerText = t.mood;
+            
+            document.getElementById('txt-todays-timeline').innerText = t.dashTitle;
+            document.getElementById('txt-priority-tasks').innerText = t.priorityTasks;
+            document.getElementById('txt-pomodoro-title').innerText = t.focusTitle;
+            document.getElementById('txt-daily-vibe').innerText = t.vibeTitle;
+            document.getElementById('txt-exams-title').innerText = t.examsTitle;
+            
+            document.getElementById('txt-view-full').innerText = t.btnFull;
+            document.getElementById('btn-cancel').innerText = t.btnCancel;
+            document.getElementById('modal-submit-btn').innerText = t.btnSave;
+            
+            document.getElementById('dashboard-quote').innerText = `"${t[quotes[quoteIdx]]}"`;
+            updateClock();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('vibeos_lang', currentLang);
+            applyLanguage();
+        }
+        function nextQuote() {
+            quoteIdx = (quoteIdx + 1) % quotes.length;
+            document.getElementById('dashboard-quote').innerText = `"${dict[currentLang][quotes[quoteIdx]]}"`;
+        }
+
+        // ================= CORE RENDERING =================
+        
+        function switchTab(tabName) {
+            const tabs = ['dashboard', 'routine', 'tasks', 'care', 'meals', 'settings'];
+            tabs.forEach(t => {
+                const section = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    section.classList.remove('hidden'); section.classList.add('tab-animate');
+                    document.getElementById(`tab-btn-${t}`)?.classList.replace('text-zinc-500', 'text-pink-600');
+                    document.getElementById(`tab-btn-${t}`)?.classList.replace('dark:text-zinc-400', 'dark:text-pink-400');
+                    document.getElementById(`tab-btn-${t}`)?.classList.add('bg-zinc-100', 'dark:bg-zinc-800');
+                    
+                    document.getElementById(`dnav-${t}`)?.classList.replace('border-transparent', 'border-pink-500');
+                    document.getElementById(`dnav-${t}`)?.classList.replace('text-zinc-500', 'text-zinc-900');
+                    document.getElementById(`dnav-${t}`)?.classList.replace('dark:text-zinc-400', 'dark:text-white');
+                } else {
+                    section.classList.add('hidden'); section.classList.remove('tab-animate');
+                    document.getElementById(`tab-btn-${t}`)?.classList.replace('text-pink-600', 'text-zinc-500');
+                    document.getElementById(`tab-btn-${t}`)?.classList.replace('dark:text-pink-400', 'dark:text-zinc-400');
+                    document.getElementById(`tab-btn-${t}`)?.classList.remove('bg-zinc-100', 'dark:bg-zinc-800');
+
+                    document.getElementById(`dnav-${t}`)?.classList.replace('border-pink-500', 'border-transparent');
+                    document.getElementById(`dnav-${t}`)?.classList.replace('text-zinc-900', 'text-zinc-500');
+                    document.getElementById(`dnav-${t}`)?.classList.replace('dark:text-white', 'dark:text-zinc-400');
+                }
+            });
+            document.getElementById('dashboard-header').style.display = tabName === 'dashboard' ? 'flex' : 'none';
+        }
+
+        function changeWater(val) {
+            waterCount = Math.max(0, Math.min(8, waterCount + val));
+            localStorage.setItem('vibeos_water', waterCount);
+            renderWater();
+        }
+        function renderWater() {
+            document.getElementById('dash-water-count').innerText = `${waterCount}/8`;
+            document.getElementById('dash-water-bar').style.width = `${(waterCount/8)*100}%`;
+        }
+
+        function renderKPIs() {
+            const doneT = tasksData.filter(t => t.completed).length;
+            const totalT = tasksData.length;
+            document.getElementById('dash-tasks-count').innerText = `${doneT}/${totalT}`;
+            document.getElementById('dash-tasks-bar').style.width = totalT ? `${(doneT/totalT)*100}%` : '0%';
+            
+            document.getElementById('dash-focus-mins').innerText = `${focusStats.mins}m`;
+            document.getElementById('dash-focus-sessions').innerText = `${focusStats.sessions} sess`;
+            document.getElementById('dash-focus-bar').style.width = `${Math.min(100, (focusStats.mins/120)*100)}%`; 
+
+            const dashMoodE = document.getElementById('dash-mood-emoji');
+            const dashMoodT = document.getElementById('dash-mood-text');
+            if(todayMood) {
+                dashMoodE.innerText = todayMood.emoji;
+                dashMoodT.innerText = todayMood.text;
+                dashMoodT.classList.remove('text-zinc-500'); dashMoodT.classList.add('text-pink-500');
+            }
+        }
+
+        function renderRoutine() {
+            routineData.sort((a, b) => a.time.localeCompare(b.time));
+            const listFull = document.getElementById('routine-list');
+            const listDash = document.getElementById('dashboard-schedule-list');
+            
+            const noDataHtml = `<div class="p-4 text-center text-xs text-zinc-500">No routines added.</div>`;
+            
+            if(!routineData.length) {
+                listFull.innerHTML = noDataHtml;
+                listDash.innerHTML = noDataHtml;
+                return;
+            }
+
+            const nowTime = new Date().toTimeString().slice(0, 5);
+            let cIdx = -1;
+            for(let i=0; i<routineData.length; i++) if(routineData[i].time <= nowTime) cIdx = i;
+
+            const mapFn = (item, i, isDash) => {
+                const isNow = i === cIdx;
+                const borderCls = isNow ? 'border-pink-500 bg-pink-50 dark:bg-pink-500/10' : 'border-zinc-200 dark:border-zinc-700/50 bg-white dark:bg-zinc-800/50';
+                return `
+                <div class="flex items-center justify-between p-3 rounded-2xl border ${borderCls} ${!isDash?'mb-2':''}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 text-center">
+                            <span class="text-xs font-bold font-mono-tabular ${isNow?'text-pink-600 dark:text-pink-400':'text-zinc-500'}">${item.time}</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(item.title)}</h4>
+                            ${!isDash ? `<p class="text-[10px] text-zinc-500 mt-0.5">${escapeHtml(item.cat)} - ${escapeHtml(item.desc)}</p>` : ''}
+                        </div>
+                    </div>
+                    ${!isDash ? `
+                    <div class="flex gap-1">
+                        <button onclick="editItem('routine','${item.id}')" class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-zinc-500"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                        <button onclick="deleteItem('routine','${item.id}')" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                    </div>` : ''}
+                </div>`;
+            };
+
+            listFull.innerHTML = routineData.map((item, i) => mapFn(item, i, false)).join('');
+            listDash.innerHTML = routineData.slice(Math.max(0, cIdx-1), cIdx+3).map((item, i) => mapFn(item, routineData.indexOf(item), true)).join('');
+        }
+
+        function renderTasks() {
+            const listFull = document.getElementById('tasks-list');
+            const listDash = document.getElementById('dashboard-tasks-list');
+            const noDataHtml = `<div class="p-4 text-center text-xs text-zinc-500">No tasks pending.</div>`;
+            
+            if(!tasksData.length) {
+                listFull.innerHTML = noDataHtml; listDash.innerHTML = noDataHtml;
+                renderKPIs(); return;
+            }
+
+            const prioColor = { 'High': 'text-red-500', 'Medium': 'text-amber-500', 'Low': 'text-emerald-500' };
+
+            const mapFn = (t, isDash) => `
+                <div class="flex items-center justify-between p-3 py-3.5 ${isDash ? '' : 'bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 rounded-2xl mb-2'} ${t.completed?'opacity-50':''}">
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleTask('${t.id}')" class="w-6 h-6 shrink-0 rounded-md border-2 ${t.completed?'bg-purple-500 border-purple-500':'border-zinc-300 dark:border-zinc-600'} flex items-center justify-center text-white">
+                            <i class="fa-solid fa-check text-[10px] ${t.completed?'opacity-100':'opacity-0'}"></i>
+                        </button>
+                        <div>
+                            <h4 class="text-sm font-semibold ${t.completed?'line-through text-zinc-500':'text-zinc-900 dark:text-zinc-100'}">${escapeHtml(t.title)}</h4>
+                            ${!t.completed ? `<span class="text-[10px] font-bold uppercase ${prioColor[t.priority]}">${t.priority} Priority</span>` : ''}
+                        </div>
+                    </div>
+                    ${!isDash ? `<button onclick="deleteItem('task','${t.id}')" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>` : ''}
+                </div>`;
+
+            listFull.innerHTML = tasksData.map(t => mapFn(t, false)).join('');
+            listDash.innerHTML = tasksData.filter(t => !t.completed).slice(0,4).map(t => mapFn(t, true)).join('') || noDataHtml;
+            renderKPIs();
+        }
+
+        function toggleTask(id) {
+            const task = tasksData.find(t => t.id === id);
+            if(task) { task.completed = !task.completed; localStorage.setItem('vibeos_tasks', JSON.stringify(tasksData)); renderTasks(); }
+        }
+
+        // ================= TIMER & AMBIENT =================
+        let tMins = 25, tSecs = 0, timerInt = null, isRunning = false, isBreak = false;
+        let audioCtx = null, noiseNode = null, gainNode = null;
+
+        function setTimerPreset(mins, breakMode, id) {
+            if(isRunning) toggleTimer();
+            tMins = mins; tSecs = 0; isBreak = breakMode;
+            document.querySelectorAll('[id^="preset-"]').forEach(el => {
+                el.classList.remove('bg-white', 'dark:bg-zinc-900', 'text-pink-600', 'dark:text-pink-400', 'shadow-sm');
+                el.classList.add('text-zinc-500');
+            });
+            const btn = document.getElementById('preset-'+id);
+            btn.classList.add('bg-white', 'dark:bg-zinc-900', 'text-pink-600', 'dark:text-pink-400', 'shadow-sm');
+            btn.classList.remove('text-zinc-500');
+            updateTDisplay();
+        }
+
+        function updateTDisplay() {
+            document.getElementById('timer-display').innerText = `${String(tMins).padStart(2,'0')}:${String(tSecs).padStart(2,'0')}`;
+            document.getElementById('txt-pomodoro-title').innerText = isBreak ? 'Break Time' : 'Study Focus Timer';
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-toggle-btn');
+            if(isRunning) {
+                clearInterval(timerInt); isRunning = false;
+                btn.innerText = "Resume"; btn.classList.replace('bg-pink-600', 'bg-purple-600');
+            } else {
+                isRunning = true;
+                btn.innerText = "Pause"; btn.classList.replace('bg-purple-600', 'bg-pink-600');
+                if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                
+                timerInt = setInterval(() => {
+                    if(tSecs === 0) {
+                        if(tMins === 0) {
+                            clearInterval(timerInt); isRunning = false;
+                            if(!isBreak) {
+                                focusStats.mins += parseInt(document.querySelector('[id^="preset-"].text-pink-600').innerText);
+                                focusStats.sessions += 1;
+                                localStorage.setItem('vibeos_focus_stats', JSON.stringify(focusStats));
+                                renderKPIs();
+                                showToast("Focus session complete!");
+                                setTimerPreset(5, true, 'b5');
+                            } else {
+                                showToast("Break over, back to work!");
+                                setTimerPreset(25, false, 'p25');
+                            }
+                            return;
+                        }
+                        tMins--; tSecs = 59;
+                    } else { tSecs--; }
+                    updateTDisplay();
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            if(isRunning) toggleTimer();
+            tMins = 25; tSecs = 0; isBreak = false;
+            setTimerPreset(25, false, 'p25');
+        }
+
+        function setAmbient(type) {
+            document.querySelectorAll('[id^="amb-"]').forEach(el => {
+                el.classList.remove('bg-white', 'dark:bg-zinc-900', 'shadow-sm', 'text-zinc-800', 'dark:text-zinc-200');
+                el.classList.add('text-zinc-500');
+            });
+            const btn = document.getElementById('amb-'+type);
+            btn.classList.add('bg-white', 'dark:bg-zinc-900', 'shadow-sm', 'text-zinc-800', 'dark:text-zinc-200');
+            btn.classList.remove('text-zinc-500');
+
+            if(audioCtx) { audioCtx.close(); audioCtx = null; }
+            if(type === 'off') return;
+
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = 2 * audioCtx.sampleRate, noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate), output = noiseBuffer.getChannelData(0);
+            let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179; b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520; b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522; b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11; 
+                b6 = white * 0.115926;
+            }
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+            
+            gainNode = audioCtx.createGain();
+            gainNode.gain.value = type === 'rain' ? 0.8 : 0.2;
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = type === 'rain' ? 1000 : 400;
+
+            noiseNode.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            noiseNode.start(0);
+        }
+
+        // ================= EXAMS =================
+        function renderExams() {
+            const list = document.getElementById('exams-list');
+            if(!examsData.length) {
+                list.innerHTML = `<div class="text-xs text-zinc-500">No upcoming exams. Relax!</div>`;
+                return;
+            }
+            examsData.sort((a,b) => new Date(a.date) - new Date(b.date));
+            list.innerHTML = examsData.map(e => {
+                const days = Math.ceil((new Date(e.date) - new Date()) / (1000*60*60*24));
+                const dText = days === 0 ? 'Today!' : days < 0 ? 'Passed' : `${days} days left`;
+                const cCls = days <= 3 && days >= 0 ? 'text-red-500 bg-red-50 dark:bg-red-500/10' : 'text-zinc-500 bg-zinc-100 dark:bg-zinc-800';
+                return `
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+                    <div>
+                        <h4 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${escapeHtml(e.title)}</h4>
+                        <span class="text-[10px] text-zinc-500">${new Date(e.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold px-2 py-1 rounded-lg ${cCls}">${dText}</span>
+                        <button onclick="deleteItem('exam','${e.id}')" class="text-zinc-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ================= MODALS =================
+        function openModal(type, id = null) {
+            activeModalType = type; editingId = id;
+            document.getElementById('app-modal').classList.remove('hidden');
+            document.getElementById('app-modal').classList.add('flex');
+            const titleEl = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            document.getElementById('modal-footer-btns').classList.remove('hidden');
+
+            const inputBase = "w-full mt-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-3.5 text-sm font-medium focus:border-pink-500 outline-none transition-colors";
+            const lblBase = "text-[10px] font-bold text-zinc-500 uppercase ml-1";
+
+            if (type === 'quick') {
+                titleEl.innerText = "Quick Actions";
+                body.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="closeModal(); setTimeout(()=>openModal('task'), 300)" class="tap-scale p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 font-bold text-xs"><i class="fa-solid fa-list-check text-xl mb-2 block"></i>Add Task</button>
+                        <button onclick="closeModal(); setTimeout(()=>openModal('routine'), 300)" class="tap-scale p-4 rounded-2xl bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 font-bold text-xs"><i class="fa-solid fa-calendar-days text-xl mb-2 block"></i>Add Routine</button>
+                        <button onclick="closeModal(); setTimeout(()=>openModal('note'), 300)" class="tap-scale p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-bold text-xs"><i class="fa-solid fa-book-open text-xl mb-2 block"></i>Journal</button>
+                        <button onclick="closeModal(); setTimeout(()=>openModal('exam'), 300)" class="tap-scale p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 font-bold text-xs"><i class="fa-solid fa-graduation-cap text-xl mb-2 block"></i>Add Exam</button>
+                    </div>`;
+                document.getElementById('modal-footer-btns').classList.add('hidden');
+            } else if (type === 'guide') {
+                const isBn = currentLang === 'bn';
+                titleEl.innerText = isBn ? "কীভাবে ব্যবহার করবে?" : "App Guide & Features";
+                body.innerHTML = `
+                    <div class="space-y-3 pb-2 text-sm text-zinc-700 dark:text-zinc-300">
+                        <div class="flex gap-3 bg-zinc-50 dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <i class="fa-solid fa-droplet text-sky-500 text-xl mt-1"></i>
+                            <div>
+                                <strong class="text-zinc-900 dark:text-zinc-100 font-display">${isBn ? "পানি ও মুড" : "Water & Mood"}</strong>
+                                <p class="text-xs mt-1 leading-relaxed text-zinc-500 dark:text-zinc-400">${isBn ? "প্রতিদিনের পানি পানের হিসাব এবং মনের অবস্থা ট্র্যাক করো। এগুলো প্রতিদিন রাতে অটোমেটিক জিরো (0) হয়ে যাবে।" : "Track your daily hydration and log your feelings. These reset automatically at midnight."}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 bg-zinc-50 dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <i class="fa-solid fa-bell text-purple-500 text-xl mt-1"></i>
+                            <div>
+                                <strong class="text-zinc-900 dark:text-zinc-100 font-display">${isBn ? "স্মার্ট অ্যালার্ম" : "Smart Alarm"}</strong>
+                                <p class="text-xs mt-1 leading-relaxed text-zinc-500 dark:text-zinc-400">${isBn ? "সেটিংস থেকে নোটিফিকেশন অন করো। অ্যাপ ওপেন বা মিনিমাইজ করে রাখলে রুটিনের সময় নিজে থেকেই অ্যালার্ম বেজে উঠবে!" : "Turn on notifications from Settings. Keep the app minimized and it will beep automatically for your routines!"}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 bg-zinc-50 dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <i class="fa-solid fa-list-check text-pink-500 text-xl mt-1"></i>
+                            <div>
+                                <strong class="text-zinc-900 dark:text-zinc-100 font-display">${isBn ? "রুটিন ও টাস্ক" : "Routine & Tasks"}</strong>
+                                <p class="text-xs mt-1 leading-relaxed text-zinc-500 dark:text-zinc-400">${isBn ? "সারাদিনের সময়সূচি ও পড়াশোনার টাস্ক সুন্দরভাবে সাজিয়ে রাখো। নির্দিষ্ট সময় হলে রুটিন অটোমেটিক হাইলাইট হবে।" : "Organize your daily schedule and study tasks. The current active routine will be highlighted automatically."}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 bg-zinc-50 dark:bg-zinc-800/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700/50">
+                            <i class="fa-solid fa-venus text-rose-500 text-xl mt-1"></i>
+                            <div>
+                                <strong class="text-zinc-900 dark:text-zinc-100 font-display">${isBn ? "যত্ন ও সাইকেল" : "Care & Cycle"}</strong>
+                                <p class="text-xs mt-1 leading-relaxed text-zinc-500 dark:text-zinc-400">${isBn ? "ডায়েরিতে নিজের ভাবনাগুলো প্রাইভেটলি লিখে রাখো এবং সহজেই পিরিয়ড সাইকেল ট্র্যাক করো।" : "Journal your daily thoughts privately and track your menstrual cycle predictions easily."}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 bg-pink-50 dark:bg-pink-900/20 p-3.5 rounded-2xl border border-pink-100 dark:border-pink-800/50 mt-4">
+                            <i class="fa-solid fa-wand-magic-sparkles text-pink-500 text-xl mt-1"></i>
+                            <div>
+                                <strong class="text-pink-700 dark:text-pink-400 font-display">${isBn ? "গোপন ম্যাজিক ✨" : "Secret Magic ✨"}</strong>
+                                <p class="text-xs mt-1 text-pink-600 dark:text-pink-300 leading-relaxed">${isBn ? "অ্যাপের একদম ওপরে নামের ওপর দ্রুত ৫ বার ট্যাপ করে দেখো, একটি ম্যাজিক অপেক্ষা করছে!" : "Tap the app title at the very top 5 times quickly to reveal a hidden cinematic surprise!"}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                document.getElementById('modal-footer-btns').classList.add('hidden');
+            } else if (type === 'routine') {
+                const item = id ? routineData.find(r=>r.id===id) : {time:'09:00', title:'', cat:'Study', desc:''};
+                titleEl.innerText = id ? "Edit Routine" : "Add Routine";
+                body.innerHTML = `
+                    <div><label class="${lblBase}">Time</label><input type="time" id="f-time" value="${item.time}" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Title</label><input type="text" id="f-title" value="${item.title}" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Category</label>
+                        <select id="f-cat" class="${inputBase}">
+                            <option value="Study" ${item.cat==='Study'?'selected':''}>Study</option>
+                            <option value="Meal" ${item.cat==='Meal'?'selected':''}>Meal</option>
+                            <option value="Health" ${item.cat==='Health'?'selected':''}>Health</option>
+                            <option value="Rest" ${item.cat==='Rest'?'selected':''}>Rest</option>
+                        </select>
+                    </div>
+                    <div><label class="${lblBase}">Note</label><input type="text" id="f-desc" value="${item.desc}" class="${inputBase}"></div>`;
+            } else if (type === 'task') {
+                const item = id ? tasksData.find(t=>t.id===id) : {title:'', priority:'Medium'};
+                titleEl.innerText = id ? "Edit Task" : "Add Task";
+                body.innerHTML = `
+                    <div><label class="${lblBase}">Title</label><input type="text" id="f-title" value="${item.title}" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Priority</label>
+                        <select id="f-priority" class="${inputBase}">
+                            <option value="High" ${item.priority==='High'?'selected':''}>High</option>
+                            <option value="Medium" ${item.priority==='Medium'?'selected':''}>Medium</option>
+                            <option value="Low" ${item.priority==='Low'?'selected':''}>Low</option>
+                        </select>
+                    </div>`;
+            } else if (type === 'exam') {
+                titleEl.innerText = "Add Exam/Deadline";
+                body.innerHTML = `
+                    <div><label class="${lblBase}">Subject/Title</label><input type="text" id="f-title" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Date</label><input type="date" id="f-date" class="${inputBase}"></div>`;
+            } else if (type === 'note') {
+                titleEl.innerText = "Journal Entry";
+                body.innerHTML = `<div><label class="${lblBase}">Thoughts</label><textarea id="f-text" rows="4" class="${inputBase}"></textarea></div>`;
+            } else if (type === 'meal') {
+                titleEl.innerText = "Add Meal";
+                body.innerHTML = `
+                    <div><label class="${lblBase}">Title</label><input type="text" id="f-title" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Time</label><input type="time" id="f-time" class="${inputBase}"></div>
+                    <div><label class="${lblBase}">Menu Details</label><input type="text" id="f-menu" class="${inputBase}"></div>`;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('app-modal').classList.remove('flex');
+            document.getElementById('app-modal').classList.add('hidden');
+        }
+
+        function handleModalSubmit() {
+            if(activeModalType === 'routine') {
+                const d = { time: document.getElementById('f-time').value||'09:00', title: document.getElementById('f-title').value.trim(), cat: document.getElementById('f-cat').value, desc: document.getElementById('f-desc').value.trim() };
+                if(!d.title) return showToast("Enter title!", true);
+                if(editingId) Object.assign(routineData.find(r=>r.id===editingId), d);
+                else routineData.push({ id:'r_'+Date.now(), ...d });
+                localStorage.setItem('vibeos_routine', JSON.stringify(routineData)); renderRoutine();
+            } else if(activeModalType === 'task') {
+                const d = { title: document.getElementById('f-title').value.trim(), priority: document.getElementById('f-priority').value };
+                if(!d.title) return showToast("Enter title!", true);
+                if(editingId) Object.assign(tasksData.find(t=>t.id===editingId), d);
+                else tasksData.push({ id:'t_'+Date.now(), completed:false, ...d });
+                localStorage.setItem('vibeos_tasks', JSON.stringify(tasksData)); renderTasks();
+            } else if(activeModalType === 'exam') {
+                const d = { title: document.getElementById('f-title').value.trim(), date: document.getElementById('f-date').value };
+                if(!d.title || !d.date) return showToast("Fill all fields!", true);
+                examsData.push({ id:'e_'+Date.now(), ...d });
+                localStorage.setItem('vibeos_exams', JSON.stringify(examsData)); renderExams();
+            } else if(activeModalType === 'note') {
+                const text = document.getElementById('f-text').value.trim();
+                if(!text) return showToast("Write something!", true);
+                journalData.unshift({ id:'j_'+Date.now(), date: new Date().toLocaleDateString(), text });
+                localStorage.setItem('vibeos_journal', JSON.stringify(journalData)); renderJournal();
+            } else if(activeModalType === 'meal') {
+                const d = { title: document.getElementById('f-title').value.trim(), time: document.getElementById('f-time').value, menu: document.getElementById('f-menu').value.trim() };
+                if(!d.title) return showToast("Enter title!", true);
+                mealsData.push({ id:'m_'+Date.now(), ...d });
+                localStorage.setItem('vibeos_meals', JSON.stringify(mealsData)); renderMeals();
+            }
+            closeModal(); showToast("Saved Successfully!");
+        }
+
+        function editItem(type, id) { openModal(type, id); }
+        function deleteItem(type, id) {
+            if(type==='routine') routineData = routineData.filter(i=>i.id!==id);
+            if(type==='task') tasksData = tasksData.filter(i=>i.id!==id);
+            if(type==='exam') examsData = examsData.filter(i=>i.id!==id);
+            if(type==='note') journalData = journalData.filter(i=>i.id!==id);
+            if(type==='meal') mealsData = mealsData.filter(i=>i.id!==id);
+            localStorage.setItem('vibeos_routine', JSON.stringify(routineData));
+            localStorage.setItem('vibeos_tasks', JSON.stringify(tasksData));
+            localStorage.setItem('vibeos_exams', JSON.stringify(examsData));
+            localStorage.setItem('vibeos_journal', JSON.stringify(journalData));
+            localStorage.setItem('vibeos_meals', JSON.stringify(mealsData));
+            renderRoutine(); renderTasks(); renderExams(); renderJournal(); renderMeals();
+            showToast("Item deleted");
+        }
+
+        // ================= SECONDARY TABS LOGIC =================
+        function logMood(emoji, text) {
+            todayMood = {emoji, text};
+            localStorage.setItem('vibeos_mood_today', JSON.stringify(todayMood));
+            localStorage.setItem('vibeos_mood_date', new Date().toDateString());
+            renderKPIs(); showToast(`Mood: ${text} logged!`);
+        }
+        
+        function renderJournal() {
+            const list = document.getElementById('journal-list');
+            if(!journalData.length) { list.innerHTML = `<div class="text-xs text-zinc-500">No entries yet.</div>`; return; }
+            list.innerHTML = journalData.map(j => `
+                <div class="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-[10px] font-bold text-zinc-500">${j.date}</span>
+                        <button onclick="deleteItem('note','${j.id}')" class="text-zinc-400 hover:text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                    </div>
+                    <p class="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">${escapeHtml(j.text)}</p>
+                </div>`).join('');
+        }
+
+        function renderMeals() {
+            const list = document.getElementById('meals-list');
+            if(!mealsData.length) { list.innerHTML = `<div class="p-4 text-center text-xs text-zinc-500">No meals added.</div>`; return; }
+            mealsData.sort((a, b) => a.time.localeCompare(b.time));
+            list.innerHTML = mealsData.map(m => `
+                <div class="flex items-center justify-between p-3 py-3.5 bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 rounded-2xl mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-utensils"></i></div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">${escapeHtml(m.title)} <span class="text-[10px] text-zinc-500 ml-1 font-mono-tabular">${m.time}</span></h4>
+                            <p class="text-[10px] text-zinc-500 mt-0.5">${escapeHtml(m.menu)}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteItem('meal','${m.id}')" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                </div>`).join('');
+        }
+
+        function initPeriod() {
+            document.getElementById('period-date-display').innerText = periodData.startDate;
+            document.getElementById('cycle-length-select').value = periodData.cycleLength;
+            
+            const start = new Date(periodData.startDate);
+            const next = new Date(start); next.setDate(start.getDate() + parseInt(periodData.cycleLength));
+            const diff = Math.ceil((next - new Date()) / (1000*60*60*24));
+            
+            const txt = document.getElementById('period-status-text');
+            if(diff > 0) txt.innerText = `In ${diff} days`;
+            else if(diff === 0) txt.innerText = `Expected Today`;
+            else txt.innerText = `Delayed by ${Math.abs(diff)} days`;
+        }
+        function openCustomDatePicker() {
+            const val = prompt("Enter Last Period Date (YYYY-MM-DD):", periodData.startDate);
+            if(val && !isNaN(Date.parse(val))) { periodData.startDate = val; localStorage.setItem('vibeos_period', JSON.stringify(periodData)); initPeriod(); }
+        }
+        function setCycleLength(val) {
+            periodData.cycleLength = val; localStorage.setItem('vibeos_period', JSON.stringify(periodData)); initPeriod();
+        }
+
+        // ================= BREATHING =================
+        let breathInt;
+        function openBreathingModal() {
+            document.getElementById('breathing-modal').classList.remove('hidden');
+            document.getElementById('breathing-modal').classList.add('flex');
+            const inst = document.getElementById('breath-instruction');
+            const circle = document.getElementById('breath-circle');
+            circle.classList.add('animate-breathe');
+            
+            let phases = ["Breathe in...", "Hold...", "Breathe out...", "Hold..."];
+            let pIdx = 0; inst.innerText = phases[0];
+            breathInt = setInterval(() => { pIdx = (pIdx+1)%4; inst.innerText = phases[pIdx]; }, 4000);
+        }
+        function closeBreathingModal() {
+            document.getElementById('breathing-modal').classList.add('hidden');
+            document.getElementById('breathing-modal').classList.remove('flex');
+            document.getElementById('breath-circle').classList.remove('animate-breathe');
+            clearInterval(breathInt);
+        }
+
+        // ================= UTILS, INIT & EASTER EGG =================
+        function escapeHtml(str) { return str.replace(/[&<>'"]/g, t => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[t])); }
+        function showToast(msg, isError=false) {
+            const c = document.getElementById('toast-container');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-text').innerText = msg;
+            
+            if(isError) { icon.className = "fa-solid fa-circle-exclamation text-red-500"; } 
+            else { icon.className = "fa-solid fa-circle-check text-pink-500"; }
+
+            c.classList.remove('opacity-0', 'translate-y-4');
+            setTimeout(() => c.classList.add('opacity-0', 'translate-y-4'), 3500);
+        }
+
+        let tapCount=0, tapTimer=null;
+        function triggerEasterEgg() {
+            tapCount++; clearTimeout(tapTimer);
+            if(tapCount >= 5) { 
+                tapCount = 0; 
+                
+                // 1. Change Background Orbs
+                const orb1 = document.getElementById('bg-orb-1');
+                const orb2 = document.getElementById('bg-orb-2');
+                if(orb1 && orb2) {
+                    orb1.classList.replace('bg-pink-500/10', 'bg-rose-500/40');
+                    orb2.classList.replace('bg-purple-500/10', 'bg-red-500/40');
+                }
+
+                // 2. Setup Overlay and Floating Hearts
+                const overlay = document.getElementById('easter-egg-overlay');
+                const content = document.getElementById('easter-egg-content');
+                const heartsContainer = document.getElementById('floating-hearts');
+                
+                overlay.classList.remove('hidden');
+                void overlay.offsetWidth; // trigger reflow
+                
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                content.classList.remove('scale-50', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+
+                heartsContainer.innerHTML = '';
+                // Generate 25 floating hearts
+                for(let i=0; i<25; i++) {
+                    let heart = document.createElement('i');
+                    heart.className = 'fa-solid fa-heart heart-float';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    heart.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+                    heart.style.animationDelay = (Math.random() * 0.8) + 's';
+                    heartsContainer.appendChild(heart);
+                }
+
+                // 3. Hide everything smoothly after 4 seconds
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-100');
+                    overlay.classList.add('opacity-0');
+                    content.classList.remove('scale-100', 'opacity-100');
+                    content.classList.add('scale-50', 'opacity-0');
+                    
+                    if(orb1 && orb2) {
+                        orb1.classList.replace('bg-rose-500/40', 'bg-pink-500/10');
+                        orb2.classList.replace('bg-red-500/40', 'bg-purple-500/10');
+                    }
+                    
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        heartsContainer.innerHTML = '';
+                    }, 700);
+                }, 4000);
+            }
+            else { tapTimer = setTimeout(()=>tapCount=0, 600); }
+        }
+
+        function exportData() {
+            const data = { routine:routineData, tasks:tasksData, meals:mealsData, journal:journalData, period:periodData, exams:examsData };
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
+            a.download = `vibeos_backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+        function importData(e) {
+            const file = e.target.files[0]; if(!file) return;
+            const r = new FileReader();
+            r.onload = (evt) => {
+                try {
+                    const d = JSON.parse(evt.target.result);
+                    if(d.routine) routineData = d.routine; if(d.tasks) tasksData = d.tasks;
+                    if(d.meals) mealsData = d.meals; if(d.journal) journalData = d.journal;
+                    if(d.period) periodData = d.period; if(d.exams) examsData = d.exams;
+                    localStorage.setItem('vibeos_routine', JSON.stringify(routineData));
+                    localStorage.setItem('vibeos_tasks', JSON.stringify(tasksData));
+                    localStorage.setItem('vibeos_meals', JSON.stringify(mealsData));
+                    localStorage.setItem('vibeos_journal', JSON.stringify(journalData));
+                    localStorage.setItem('vibeos_period', JSON.stringify(periodData));
+                    localStorage.setItem('vibeos_exams', JSON.stringify(examsData));
+                    window.location.reload();
+                } catch(err) { showToast("Invalid File", true); }
+            }; r.readAsText(file);
+        }
+        async function confirmReset() {
+            if(confirm("Wipe all data? This cannot be undone.")) { 
+                localStorage.clear(); 
+                window.location.reload(); 
+            }
+        }
+
+        // ================= SMART WEB NOTIFICATION & ALARM ENGINE =================
+        let lastNotifiedMin = null;
+        let isNotificationAllowed = localStorage.getItem('vibeos_notif_enabled') === 'true';
+        
+        async function requestNotificationPermission() {
+            if ('Notification' in window) {
+                const perm = await Notification.requestPermission();
+                if (perm === 'granted') {
+                    isNotificationAllowed = true;
+                    localStorage.setItem('vibeos_notif_enabled', 'true');
+                    showToast("Alarm & Notifications Enabled!");
+                    // Initialize audio context to unlock sound on mobile browsers
+                    new (window.AudioContext || window.webkitAudioContext)().resume();
+                } else {
+                    showToast("Permission denied by browser.", true);
+                }
+            } else {
+                // Fallback for older browsers
+                isNotificationAllowed = true;
+                localStorage.setItem('vibeos_notif_enabled', 'true');
+                showToast("Alarm Sound Enabled!");
+                new (window.AudioContext || window.webkitAudioContext)().resume();
+            }
+        }
+
+        // Function to play a loud, pleasant Beep Sound using Web Audio API
+        function playAlarmBeep() {
+            if(!isNotificationAllowed) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if(ctx.state === 'suspended') ctx.resume();
+                
+                // Play 3 quick beeps
+                for(let i=0; i<3; i++) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.type = 'triangle'; // Smooth but noticeable sound
+                    osc.frequency.value = 880; // A5 note
+                    
+                    gain.gain.setValueAtTime(0.5, ctx.currentTime + i*0.4);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i*0.4 + 0.3);
+                    
+                    osc.start(ctx.currentTime + i*0.4);
+                    osc.stop(ctx.currentTime + i*0.4 + 0.35);
+                }
+            } catch(e) { console.error("Audio error", e); }
+        }
+
+        function checkWebNotifications() {
+            const now = new Date();
+            // Get current hour and minute (e.g. "14:30")
+            const currentMin = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            
+            if (lastNotifiedMin !== currentMin) {
+                const dueRoutines = routineData.filter(r => r.time === currentMin);
+                if (dueRoutines.length > 0) {
+                    lastNotifiedMin = currentMin; // Prevent duplicate rings in the same minute
+                    
+                    dueRoutines.forEach(r => {
+                        // 1. Play Alarm Sound
+                        playAlarmBeep();
+
+                        // 2. Show Visual Popup
+                        showToast(`🔔 Time for: ${r.title}`);
+                        
+                        // 3. Send OS Push Notification (if allowed)
+                        if (isNotificationAllowed && 'Notification' in window && Notification.permission === 'granted') {
+                            new Notification(`Time for: ${r.title}`, { 
+                                body: r.desc || "It's time to start this routine!",
+                                icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Love_Heart_symbol.svg/1200px-Love_Heart_symbol.svg.png'
+                            });
+                        }
+                    });
+                }
+            }
+        }
+
+        // Initialize
+        applyTheme();
+        applyLanguage();
+        renderWater();
+        renderKPIs();
+        renderRoutine();
+        renderTasks();
+        renderExams();
+        renderJournal();
+        renderMeals();
+        initPeriod();
+    </script>
+</body>
+</html>
